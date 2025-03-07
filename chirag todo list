@@ -1,0 +1,134 @@
+<?php
+// Database connection
+$servername = "localhost";
+$username = "root"; // Replace with your database username
+$password = ""; // Replace with your database password
+$dbname = "todo_list";
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Add task
+if (isset($_POST['add_task'])) {
+    $task = $_POST['task'];
+    if (!empty($task)) {
+        $sql = "INSERT INTO tasks (task) VALUES ('$task')";
+        if ($conn->query($sql) === TRUE) {
+            echo "New task added successfully";
+        } else {
+            echo "Error: " . $sql . "<br>" . $conn->error;
+        }
+    }
+}
+
+// Delete task
+if (isset($_GET['delete_id'])) {
+    $delete_id = $_GET['delete_id'];
+    $sql = "DELETE FROM tasks WHERE id=$delete_id";
+    if ($conn->query($sql) === TRUE) {
+        echo "Task deleted successfully";
+    } else {
+        echo "Error: " . $conn->error;
+    }
+}
+
+// Fetch tasks
+$sql = "SELECT * FROM tasks ORDER BY created_at DESC";
+$result = $conn->query($sql);
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple To-Do List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f7f7f7;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        .task {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .task button {
+            margin-left: 10px;
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        form {
+            margin: 20px 0;
+            text-align: center;
+        }
+        input[type="text"] {
+            padding: 10px;
+            width: 60%;
+            border-radius: 3px;
+            border: 1px solid #ccc;
+        }
+        input[type="submit"] {
+            padding: 10px;
+            border-radius: 3px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Simple To-Do List</h1>
+
+    <form method="POST" action="">
+        <input type="text" name="task" placeholder="Enter a new task..." required>
+        <input type="submit" name="add_task" value="Add Task">
+    </form>
+
+    <h3>To-Do List:</h3>
+
+    <?php
+    if ($result->num_rows > 0) {
+        while($row = $result->fetch_assoc()) {
+            echo '<div class="task">' . $row['task'] . ' <a href="?delete_id=' . $row['id'] . '"><button>Delete</button></a></div>';
+        }
+    } else {
+        echo "<p>No tasks found.</p>";
+    }
+
+    $conn->close();
+    ?>
+
+</body>
+</html>
+
+
+
+// Set up the MySQL Database
+
+CREATE DATABASE todo_list;
+USE todo_list;
+
+CREATE TABLE tasks (
+    id INT(11) AUTO_INCREMENT PRIMARY KEY,
+    task VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
