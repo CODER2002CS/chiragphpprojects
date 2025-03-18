@@ -1,0 +1,178 @@
+import React, { useState } from 'react';
+import './index.css';
+
+const PasswordGenerator = () => {
+  const [password, setPassword] = useState('');
+  const [length, setLength] = useState(12);
+  const [includeUppercase, setIncludeUppercase] = useState(true);
+  const [includeNumbers, setIncludeNumbers] = useState(true);
+  const [includeSymbols, setIncludeSymbols] = useState(true);
+
+  const generatePassword = () => {
+    const lowercaseChars = 'abcdefghijklmnopqrstuvwxyz';
+    const uppercaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const numbers = '0123456789';
+    const symbols = '!@#$%^&*()_+[]{}|;:,.<>?';
+
+    let characters = lowercaseChars;
+
+    if (includeUppercase) characters += uppercaseChars;
+    if (includeNumbers) characters += numbers;
+    if (includeSymbols) characters += symbols;
+
+    let newPassword = '';
+    for (let i = 0; i < length; i++) {
+      newPassword += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+
+    setPassword(newPassword);
+  };
+
+  return (
+    <div className="password-generator-container">
+      <h1>Password Generator</h1>
+      <div className="password-output">
+        <input
+          type="text"
+          value={password}
+          readOnly
+          className="password-display"
+        />
+        <button onClick={generatePassword} className="generate-button">
+          Generate Password
+        </button>
+      </div>
+      
+      <div className="settings">
+        <div className="setting">
+          <label>Password Length:</label>
+          <input
+            type="number"
+            value={length}
+            onChange={(e) => setLength(e.target.value)}
+            min="8"
+            max="20"
+          />
+        </div>
+        <div className="setting">
+          <label>Include Uppercase</label>
+          <input
+            type="checkbox"
+            checked={includeUppercase}
+            onChange={(e) => setIncludeUppercase(e.target.checked)}
+          />
+        </div>
+        <div className="setting">
+          <label>Include Numbers</label>
+          <input
+            type="checkbox"
+            checked={includeNumbers}
+            onChange={(e) => setIncludeNumbers(e.target.checked)}
+          />
+        </div>
+        <div className="setting">
+          <label>Include Symbols</label>
+          <input
+            type="checkbox"
+            checked={includeSymbols}
+            onChange={(e) => setIncludeSymbols(e.target.checked)}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default PasswordGenerator;
+
+
+
+
+/* General styling */
+.password-generator-container {
+  text-align: center;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.password-output {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.password-display {
+  font-size: 1.5rem;
+  padding: 10px;
+  margin-right: 10px;
+  width: 100%;
+  max-width: 300px;
+  text-align: center;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.generate-button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.generate-button:hover {
+  background-color: #0056b3;
+}
+
+.settings {
+  margin-top: 20px;
+}
+
+.setting {
+  margin-bottom: 10px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+input[type='number'],
+input[type='checkbox'] {
+  margin-right: 10px;
+}
+
+@media (max-width: 600px) {
+  .password-display {
+    font-size: 1rem;
+    max-width: 100%;
+  }
+
+  .generate-button {
+    width: 100%;
+  }
+
+  .settings {
+    padding: 0 10px;
+  }
+}
+
+
+
+
+//App.js
+
+import React from 'react';
+import PasswordGenerator from './PasswordGenerator';
+
+function App() {
+  return (
+    <div className="App">
+      <PasswordGenerator />
+    </div>
+  );
+}
+
+export default App;
